@@ -35,7 +35,7 @@ public class SwiftQuiz {
     // TODO: Provide a cleaner interface to this service.
     public var imagesService: ImagesService?
     
-    init(quizURL: URL) {
+    public init(quizURL: URL) {
         self.quizURL = quizURL
     }
     

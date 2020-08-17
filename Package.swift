@@ -3,13 +3,10 @@ import PackageDescription
 
 let package = Package(
     name: "swift-quiz",
-    platforms: [
-        .macOS(.v10_10)
-    ],
     products: [
         .library(
-            name: "swift-quiz",
-            targets: ["swift-quiz"]
+            name: "SwiftQuiz",
+            targets: ["SwiftQuiz"]
         )
     ],
     dependencies: [
@@ -20,7 +17,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "swift-quiz",
+            name: "SwiftQuiz",
             dependencies: ["Hash"],
             path: "code"
         )
