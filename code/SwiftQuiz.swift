@@ -137,7 +137,7 @@ public class SwiftQuiz {
             let answersURL = URL(fileURLWithPath: "answers.txt")
             try? submission.description.data(using: .utf8)?.write(to: answersURL)
             if let slackURL = quiz.configuration.markingURL {
-                let messagingService = SlackMessagingService(hookURL: slackURL)
+                let messagingService = QuizServices.messaging(hookURL: slackURL)
                 messagingService.message(submission.description) {
                     self.invokeCallback(with: .quizComplete)
                 }

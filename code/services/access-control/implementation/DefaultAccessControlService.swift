@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LetterCase
 
 class DefaultAccessControlService: AccessControlService {
     

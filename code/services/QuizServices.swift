@@ -9,12 +9,16 @@ import Foundation
 
 public struct QuizServices {
     
+    public static func accessControl(_ quiz: Quiz) -> AccessControlService {
+        return DefaultAccessControlService(quiz: quiz)
+    }
+    
     public static var parsing: ParsingService {
         return CodableParsingService()
     }
     
-    public static func accessControl(_ quiz: Quiz) -> AccessControlService {
-        return DefaultAccessControlService(quiz: quiz)
+    static func messaging(hookURL: URL) -> MessagingService {
+        return SlackMessagingService(hookURL: hookURL)
     }
     
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SlackMessagingService {
+class SlackMessagingService: MessagingService {
     let hookURL: URL
     
     init(hookURL: URL) {
