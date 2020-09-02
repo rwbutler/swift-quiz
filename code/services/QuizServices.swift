@@ -17,6 +17,10 @@ public struct QuizServices {
         return CodableParsingService()
     }
     
+    static func marking(mode: Marking, threshold: Double) -> MarkingService {
+        return DefaultMarkingService(mode: mode, threshold: threshold)
+    }
+    
     static func messaging(hookURL: URL) -> MessagingService {
         return SlackMessagingService(hookURL: hookURL)
     }

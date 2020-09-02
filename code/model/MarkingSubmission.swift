@@ -50,9 +50,20 @@ extension MarkingSubmission: CustomStringConvertible {
         submission.forEach { round in
             result += "\(round.title)\n"
             for (answerIndex, answer) in round.answers.enumerated() {
-                result += "\(answerIndex).) \(answer.question)\n>\t\(answer.answer.joined(separator: ", "))\n"
+                let scoreString = "\(answer.score)/\(answer.potentialScore) \(emoji(score: answer.score, potentialScore: answer.potentialScore))"
+                result += "\(answerIndex).) \(answer.question)\n>\t\(answer.answer.joined(separator: ", "))\n\(scoreString)\n"
             }
         }
         return result
+    }
+    
+    private func emoji(score: UInt, potentialScore: UInt) -> String {
+        if score == potentialScore {
+            return "✅"
+        } else if score == 0 {
+            return "❌"
+        } else {
+            return "☑️"
+        }
     }
 }

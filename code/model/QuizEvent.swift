@@ -14,6 +14,7 @@ public enum QuizEvent: Equatable, CustomStringConvertible {
     case question(_ question: String)
     case quizComplete
     case quizReady
+    case marking
     case message(_ message: String)
     case roundStart(_ title: String)
     case waitingForNextQuestion
@@ -37,6 +38,8 @@ public enum QuizEvent: Equatable, CustomStringConvertible {
             return "⏲ Awaiting next question"
         case .waitingForNextRound:
             return "⏱ Awaiting next round"
+        case .marking:
+            return ""
         }
     }
     

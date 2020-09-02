@@ -9,11 +9,12 @@
 import Foundation
 import Hash
 
+typealias QuestionKey = UUID
+
 public class SwiftQuiz {
     
     public typealias PackageQuizResult = Result<Void, Error>
     public typealias QuizResult = Result<Quiz, Error>
-    typealias QuestionKey = UUID
     
     private var answers: [QuestionKey: [String]] = [:]
     private var currentQuestion: Question?
@@ -29,8 +30,8 @@ public class SwiftQuiz {
     private var accessControlService: AccessControlService?
     
     public var advanceAutomatically: Bool = true
-    public var eventCallback: ((QuizEvent) -> Void)?
-    public var errorCallback: ((Error) -> Void)?
+    public var eventCallbacks: [((QuizEvent) -> Void)] = []
+    public var errorCallbacks: [((Error) -> Void)] = []
     
     // TODO: Provide a cleaner interface to this service.
     public var imagesService: ImagesService?
@@ -77,6 +78,10 @@ public class SwiftQuiz {
     }
     
     private func setQuestion(_ question: Question) {
+        if let markingModel = quiz?.configuration.marking,
+            case .eachQuestion = markingModel {
+            
+        }
         accessControlService?.isUnlocked(question.id) { [weak self] isUnlocked in
             guard let self = self else {
                 return
@@ -126,10 +131,13 @@ public class SwiftQuiz {
             return
         }
         let nextRoundIndex = roundIndex.advanced(by: 1)
+        let markingService = QuizServices.marking(mode: .atEnd, threshold: 0.15)
         guard nextRoundIndex != quiz.rounds.endIndex else {
             let rounds: [MarkingSubmissionRound] = quiz.rounds.map { round in
-                let answers = round.questions.map { question in
-                    return MarkingSubmissionAnswer(question: question.question, answer: self.answers[question.id] ?? [], score: 0, potentialScore: 0)
+                let answers: [MarkingSubmissionAnswer] = round.questions.map { question in
+                    let markedQuestion: MarkingSubmissionAnswer = markingService.mark(question: question, answers: self.answers[question.id] ?? [])
+                    return MarkingSubmissionAnswer(question: question.question, answer: self.answers[question.id] ?? [], score: markedQuestion
+                        .score, potentialScore: markedQuestion.potentialScore)
                 }
                 return MarkingSubmissionRound(title: round.title, answers: answers)
             }
@@ -317,7 +325,9 @@ private extension SwiftQuiz {
     
     private func invokeCallback(with event: QuizEvent) {
         let nextOperation = BlockOperation { [weak self] in
-            self?.eventCallback?(event)
+            self?.eventCallbacks.forEach { callback in
+                callback(event)
+            }
         }
         if let previousOperation = previousOperation {
             nextOperation.addDependency(previousOperation)
@@ -328,7 +338,9 @@ private extension SwiftQuiz {
     
     private func invokeCallback(with error: Error) {
         externalQueue.async { [weak self] in
-            self?.errorCallback?(error)
+            self?.errorCallbacks.forEach { callback in
+                callback(error)
+            }
         }
     }
     
