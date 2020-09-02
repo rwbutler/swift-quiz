@@ -129,7 +129,7 @@ public class SwiftQuiz {
         guard nextRoundIndex != quiz.rounds.endIndex else {
             let rounds: [MarkingSubmissionRound] = quiz.rounds.map { round in
                 let answers = round.questions.map { question in
-                    return MarkingSubmissionAnswer(question: question.question, answer: self.answers[question.id] ?? [])
+                    return MarkingSubmissionAnswer(question: question.question, answer: self.answers[question.id] ?? [], score: 0, potentialScore: 0)
                 }
                 return MarkingSubmissionRound(title: round.title, answers: answers)
             }
