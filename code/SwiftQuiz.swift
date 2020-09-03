@@ -78,7 +78,7 @@ public class SwiftQuiz {
     }
     
     private func setQuestion(_ question: Question) {
-        if let markingModel = quiz?.configuration.marking,
+        if let markingModel = quiz?.configuration.markingOccurs,
             case .eachQuestion = markingModel {
             
         }

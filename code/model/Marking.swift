@@ -9,8 +9,8 @@
 import Foundation
 
 enum Marking: String, Codable {
-    case none
-    case atEnd
-    case eachQuestion
-    case eachRound
+    case never
+    case atEnd = "at-quiz-end"
+    case eachQuestion = "every-question"
+    case eachRound = "at-round-end"
 }

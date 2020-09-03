@@ -76,7 +76,7 @@ struct QuizFactory {
             quizType = .local
         }
         let configuration = QuizConfiguration(
-            marking: model.marking ?? .none,
+            markingOccurs: model.marking ?? .never,
             markingURL: model.markingUrl,
             type: quizType
         )
