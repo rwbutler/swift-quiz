@@ -18,25 +18,27 @@ struct DefaultMarkingService: MarkingService {
     }
     
     func isCorrect(_ submittedAnswer: String, correctAnswers: [String]) -> Bool {
-        let results = fuse.search(submittedAnswer, in: correctAnswers)
-        let resultsAboveThreshold = results.map { (index, score, matchedRanges) in
-            return score <= threshold
+        let isCorrect = correctAnswers.reduce(false) { (result, correctAnswer) in
+            if let searchResult = fuse.search(correctAnswer, in: submittedAnswer) {
+                return (searchResult.score <= threshold) && result
+            }
+            return result
         }
-        return !resultsAboveThreshold.isEmpty
+        return isCorrect
     }
     
     func mark(question: Question, answers: [String]) -> MarkingSubmissionAnswer {
         switch question {
         case .shortAnswer(let shortAnswer):
             guard let submittedAnswer = answers.first,
-                let score = fuse.search(submittedAnswer, in: shortAnswer.answer)?.score,
+                let score = fuse.search(shortAnswer.answer, in: submittedAnswer)?.score,
                 score <= threshold else {
                     return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], score: 0, potentialScore: 1)
             }
             return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], score: 1, potentialScore: 1)
         case .multipleChoice(let multipleChoice):
             guard let submittedAnswer = answers.first,
-                let score = fuse.search(submittedAnswer, in: multipleChoice.answer)?.score,
+                let score = fuse.search(multipleChoice.answer, in: submittedAnswer)?.score,
                 score <= threshold else {
                     return MarkingSubmissionAnswer(question: question.question, answer: [multipleChoice.answer], score: 0, potentialScore: 1)
             }

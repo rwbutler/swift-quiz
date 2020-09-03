@@ -15,7 +15,8 @@ class SlackMessagingService: MessagingService {
     }
     
     func message(_ message: String, completion: @escaping () -> Void) {
-        let characterSet = CharacterSet.alphanumerics.union(CharacterSet.whitespacesAndNewlines)
+        let whitelistedCharacters = CharacterSet(charactersIn: "()>/.☑️✅❌📝➡️:")
+        let characterSet = CharacterSet.alphanumerics.union(CharacterSet.whitespacesAndNewlines).union(whitelistedCharacters)
         let formattedMessage = "\(String(message.unicodeScalars.filter { characterSet.contains($0) }))\n"
         var request = URLRequest(url: hookURL)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")

@@ -51,8 +51,14 @@ extension MarkingSubmission: CustomStringConvertible {
             result += "\(round.title)\n"
             for (answerIndex, answer) in round.answers.enumerated() {
                 let scoreString = "\(answer.score)/\(answer.potentialScore) \(emoji(score: answer.score, potentialScore: answer.potentialScore))"
-                result += "\(answerIndex).) \(answer.question)\n>\t\(answer.answer.joined(separator: ", "))\n\(scoreString)\n"
+                result += "\(answerIndex).) \(answer.question)\n\t➡️ Submitted answer: \(answer.answer.joined(separator: ", "))\n\(scoreString)\n"
             }
+            if round.totalPotentialScore != 0 {
+                result += "\nRound score: \(round.totalScore)/\(round.totalPotentialScore)\n\n"
+            }
+        }
+        if totalPotentialScore != 0 {
+            result += "\n\nTotal score: \(totalScore)/\(totalPotentialScore)\n"
         }
         return result
     }
