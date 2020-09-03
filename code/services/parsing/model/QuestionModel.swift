@@ -16,6 +16,6 @@ struct QuestionModel: Codable {
     let choices: [String]?
     let images: [URL]?
     let image: URL?
-    let scoring: QuestionScoring?
+    let scoring: [QuestionScoring]?
     
 }

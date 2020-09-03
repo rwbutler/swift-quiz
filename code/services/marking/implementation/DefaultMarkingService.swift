@@ -42,22 +42,28 @@ struct DefaultMarkingService: MarkingService {
             }
             return MarkingSubmissionAnswer(question: question.question, answer: [multipleChoice.answer], score: 1, potentialScore: 1)
         case .multipleAnswer(let multipleAnswer):
-            let scoring = multipleAnswer.scoring
+            let scoringRules = multipleAnswer.scoring
             let correctAnswers = multipleAnswer.answers
             let correctAnswerCount = answers.map {
                 isCorrect($0, correctAnswers: correctAnswers)
             }.filter { $0 == true }.count
-            switch scoring.awardedFor {
-            case .allCorrect:
-                let allCorrect = correctAnswers.count == answers.count
-                let score = allCorrect ? scoring.awardsScore : 0
-                return MarkingSubmissionAnswer(question: question.question, answer: answers, score: UInt(score), potentialScore: UInt(scoring.awardsScore))
-            case .eachCorrect:
-                let requiredAnswerCount = scoring.answerCount ?? 1
-                let score = (correctAnswerCount / requiredAnswerCount) * scoring.awardsScore
-                let potentialScore = (answers.count / requiredAnswerCount) * scoring.awardsScore
-                return MarkingSubmissionAnswer(question: question.question, answer: answers, score: UInt(score), potentialScore: UInt(potentialScore))
+            var score: Int = 0
+            var potentialScore: Int = 0
+            
+            // Iterate scoring criteria
+            for scoringRule in scoringRules {
+                switch scoringRule.awardedFor {
+                case .allCorrect:
+                    let allCorrect = correctAnswers.count == answers.count
+                    score += allCorrect ? scoringRule.awardsScore : 0
+                    potentialScore += scoringRule.awardsScore
+                case .eachCorrect:
+                    let requiredAnswerCount = scoringRule.answerCount ?? 1
+                    score += (correctAnswerCount / requiredAnswerCount) * scoringRule.awardsScore
+                    potentialScore += (answers.count / requiredAnswerCount) * scoringRule.awardsScore
+                }
             }
+            return MarkingSubmissionAnswer(question: question.question, answer: answers, score: UInt(score), potentialScore: UInt(potentialScore))
         }
     }
     

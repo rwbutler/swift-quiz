@@ -54,7 +54,7 @@ struct QuizFactory {
                     guard let answers = questionModel.answers else {
                         throw PackagingError.questionMissingAnswer
                     }
-                    let scoring = questionModel.scoring ?? QuestionScoring(answerCount: nil, awardsScore: 1, awardedFor: .allCorrect)
+                    let scoring = questionModel.scoring ?? [QuestionScoring(answerCount: 1, awardsScore: 1, awardedFor: .allCorrect)]
                     let multipleAnswer = MultipleAnswer(
                         id: UUID(),
                         answers: answers,

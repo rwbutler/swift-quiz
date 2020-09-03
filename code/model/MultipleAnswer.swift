@@ -13,7 +13,7 @@ struct MultipleAnswer: Codable {
     let answers: [String]
     let image: Data?
     let question: String
-    let scoring: QuestionScoring
+    let scoring: [QuestionScoring]
 }
 
 struct QuestionScoring: Codable {
