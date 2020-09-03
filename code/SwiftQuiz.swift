@@ -166,6 +166,7 @@ public class SwiftQuiz {
             let factory = QuizFactory(model: model)
             let quiz = try factory.manufacture()
             let encoder = JSONEncoder()
+            encoder.keyEncodingStrategy = .convertToKebabCase
             var outputData = try encoder.encode(quiz)
             if let key = key?.data(using: .utf8) {
                 outputData = EncryptedData(message: outputData, key: key, algorithm: .aes256).data()
