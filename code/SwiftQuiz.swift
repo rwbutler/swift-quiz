@@ -90,6 +90,14 @@ public class SwiftQuiz {
                 self.invokeCallback(with: .waitingForNextQuestion)
                 return
             }
+            if let currentQuestion = self.currentQuestion,
+                let markingFrequency = self.quiz?.configuration.markingOccurs,
+                let submittedAnswers = self.answers[currentQuestion.id],
+                markingFrequency.shouldDisplayMarkedResultsAfterQuestion {
+                let markingService = QuizServices.marking(mode: markingFrequency, threshold: QuizServices.markingThreshold)
+                let markingResult = markingService.mark(question: currentQuestion, answers: submittedAnswers)
+                self.invokeCallback(with: .marking(.questionResult(markingResult)))
+            }
             self.currentQuestion = question
             self.invokeCallback(with: .question(question.question))
             if let image = question.image {
@@ -106,6 +114,17 @@ public class SwiftQuiz {
             guard isUnlocked else {
                 self.invokeCallback(with: .waitingForNextRound)
                 return
+            }
+            if let currentRound = self.currentRound,
+                let markingFrequency = self.quiz?.configuration.markingOccurs,
+                markingFrequency.shouldDisplayMarkedResultsAfterRound {
+                let markingService = QuizServices.marking(mode: markingFrequency, threshold: QuizServices.markingThreshold)
+                let markedQuestions: [MarkingSubmissionAnswer] = currentRound.questions.map { question in
+                    let submittedAnswers = self.answers[question.id] ?? []
+                    return markingService.mark(question: question, answers: submittedAnswers)
+                }
+                let markedRound = MarkingSubmissionRound(title: currentRound.title, answers: markedQuestions)
+                self.invokeCallback(with: .marking(.roundResult(markedRound)))
             }
             self.currentRound = round
             self.currentQuestion = nil
@@ -131,17 +150,28 @@ public class SwiftQuiz {
             return
         }
         let nextRoundIndex = roundIndex.advanced(by: 1)
-        let markingService = QuizServices.marking(mode: .atEnd, threshold: 0.15)
+        let markingService = QuizServices.marking(mode: .atEnd, threshold: QuizServices.markingThreshold)
         guard nextRoundIndex != quiz.rounds.endIndex else {
+            // Quiz complete
             let rounds: [MarkingSubmissionRound] = quiz.rounds.map { round in
                 let answers: [MarkingSubmissionAnswer] = round.questions.map { question in
-                    let markedQuestion: MarkingSubmissionAnswer = markingService.mark(question: question, answers: self.answers[question.id] ?? [])
-                    return MarkingSubmissionAnswer(question: question.question, answer: self.answers[question.id] ?? [], score: markedQuestion
-                        .score, potentialScore: markedQuestion.potentialScore)
+                    let shouldDisplayedMarkedResults = quiz.configuration.markingOccurs.shouldDisplayMarkedResultsAfterGame
+                    let score: UInt
+                    let potentialScore: UInt
+                    if shouldDisplayedMarkedResults {
+                        let markedQuestion: MarkingSubmissionAnswer = markingService.mark(question: question, answers: self.answers[question.id] ?? [])
+                        score = markedQuestion.score
+                        potentialScore = markedQuestion.potentialScore
+                    } else {
+                        score = 0
+                        potentialScore = 0
+                    }
+                    return MarkingSubmissionAnswer(question: question.question, answer: self.answers[question.id] ?? [], correctAnswers: question.answers, score: score, potentialScore: potentialScore)
                 }
                 return MarkingSubmissionRound(title: round.title, answers: answers)
             }
             let submission = MarkingSubmission(submission: rounds)
+            invokeCallback(with: .marking(.gameResult(submission)))
             let answersURL = URL(fileURLWithPath: "answers.txt")
             try? submission.description.data(using: .utf8)?.write(to: answersURL)
             if let slackURL = quiz.configuration.markingURL {

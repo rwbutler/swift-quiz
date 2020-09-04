@@ -65,6 +65,17 @@ enum Question: Codable {
         }
     }
     
+    var answers: [String] {
+        switch self {
+        case .multipleAnswer(let multipleAnswer):
+            return multipleAnswer.answers
+        case .multipleChoice(let multipleChoice):
+            return [multipleChoice.answer]
+        case .shortAnswer(let shortAnswer):
+            return [shortAnswer.answer]
+        }
+    }
+    
     var image: Data? {
         switch self {
         case .multipleAnswer(let multipleAnswer):

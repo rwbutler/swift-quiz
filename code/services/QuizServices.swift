@@ -9,6 +9,8 @@ import Foundation
 
 public struct QuizServices {
     
+    public static let markingThreshold: Double = 0.15
+    
     public static func accessControl(_ quiz: Quiz) -> AccessControlService {
         return DefaultAccessControlService(quiz: quiz)
     }
@@ -17,7 +19,7 @@ public struct QuizServices {
         return CodableParsingService()
     }
     
-    static func marking(mode: Marking, threshold: Double) -> MarkingService {
+    static func marking(mode: MarkingFrequency, threshold: Double) -> MarkingService {
         return DefaultMarkingService(mode: mode, threshold: threshold)
     }
     

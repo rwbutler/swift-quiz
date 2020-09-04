@@ -1,18 +1,12 @@
 import Foundation
 import Fuse
 
-enum MarkingResult {
-    case questionResult(_ result: MarkingSubmissionAnswer)
-    case roundResult(_ result: MarkingSubmissionRound)
-    case gameResult(_ result: MarkingSubmission)
-}
-
 struct DefaultMarkingService: MarkingService {
     private let fuse = Fuse()
-    private let mode: Marking
+    private let mode: MarkingFrequency
     private let threshold: Double
     
-    init(mode: Marking, threshold: Double)  {
+    init(mode: MarkingFrequency, threshold: Double)  {
         self.mode = mode
         self.threshold = threshold
     }
@@ -33,16 +27,16 @@ struct DefaultMarkingService: MarkingService {
             guard let submittedAnswer = answers.first,
                 let score = fuse.search(shortAnswer.answer, in: submittedAnswer)?.score,
                 score <= threshold else {
-                    return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], score: 0, potentialScore: 1)
+                    return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], correctAnswers: question.answers, score: 0, potentialScore: 1)
             }
-            return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], score: 1, potentialScore: 1)
+            return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], correctAnswers: question.answers, score: 1, potentialScore: 1)
         case .multipleChoice(let multipleChoice):
             guard let submittedAnswer = answers.first,
                 let score = fuse.search(multipleChoice.answer, in: submittedAnswer)?.score,
                 score <= threshold else {
-                    return MarkingSubmissionAnswer(question: question.question, answer: [multipleChoice.answer], score: 0, potentialScore: 1)
+                    return MarkingSubmissionAnswer(question: question.question, answer: question.answers, correctAnswers: [multipleChoice.answer], score: 0, potentialScore: 1)
             }
-            return MarkingSubmissionAnswer(question: question.question, answer: [multipleChoice.answer], score: 1, potentialScore: 1)
+            return MarkingSubmissionAnswer(question: question.question, answer: [multipleChoice.answer], correctAnswers: question.answers, score: 1, potentialScore: 1)
         case .multipleAnswer(let multipleAnswer):
             let scoringRules = multipleAnswer.scoring
             let correctAnswers = multipleAnswer.answers
@@ -65,7 +59,7 @@ struct DefaultMarkingService: MarkingService {
                     potentialScore += (answers.count / requiredAnswerCount) * scoringRule.awardsScore
                 }
             }
-            return MarkingSubmissionAnswer(question: question.question, answer: answers, score: UInt(score), potentialScore: UInt(potentialScore))
+            return MarkingSubmissionAnswer(question: question.question, answer: answers, correctAnswers: question.answers, score: UInt(score), potentialScore: UInt(potentialScore))
         }
     }
     

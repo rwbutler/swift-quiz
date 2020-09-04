@@ -9,7 +9,7 @@
 import Foundation
 
 struct QuizConfiguration: Codable {
-    let markingOccurs: Marking
+    let markingOccurs: MarkingFrequency
     let markingURL: URL?
     let type: QuizType
 }
