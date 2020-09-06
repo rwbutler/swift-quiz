@@ -31,13 +31,13 @@ public class SwiftQuiz {
     
     public var advanceAutomatically: Bool = true
     public var eventCallbacks: [((QuizEvent) -> Void)] = []
-    public var errorCallbacks: [((Error) -> Void)] = []
+    public var errorCallbacks: [((QuizError) -> Void)] = []
     
     // TODO: Provide a cleaner interface to this service.
     public var imagesService: ImagesService?
     
-    public init(quizURL: URL) {
-        self.quizURL = quizURL
+    public init(url: URL) {
+        self.quizURL = url
     }
     
     public func nextQuestion() {
@@ -333,7 +333,7 @@ private extension SwiftQuiz {
                 startQuiz(key: key)
             }
         } catch let error {
-            invokeCallback(with: error)
+            invokeCallback(with: .underlyingError(error))
         }
     }
     
@@ -349,7 +349,7 @@ private extension SwiftQuiz {
                     }
                 }
             } catch let error {
-                self?.invokeCallback(with: error)
+                self?.invokeCallback(with: .underlyingError(error))
             }
         }
     }
@@ -367,7 +367,7 @@ private extension SwiftQuiz {
         previousOperation = nextOperation
     }
     
-    private func invokeCallback(with error: Error) {
+    private func invokeCallback(with error: QuizError) {
         externalQueue.async { [weak self] in
             self?.errorCallbacks.forEach { callback in
                 callback(error)
