@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct MultipleAnswer: Codable {
+public struct MultipleAnswer: Codable {
     let id: UUID
     let answers: [String]
     let image: Data?

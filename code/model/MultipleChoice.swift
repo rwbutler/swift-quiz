@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct MultipleChoice: Codable {
+public struct MultipleChoice: Codable {
     let id: UUID
     let answer: String
     let choices: [String]

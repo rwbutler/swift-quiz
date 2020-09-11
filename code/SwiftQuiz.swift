@@ -52,7 +52,7 @@ public class SwiftQuiz {
                 return
             }
             currentQuestion = firstQuestion
-            invokeCallback(with: .question(firstQuestion.question))
+            invokeCallback(with: .question(firstQuestion))
             if let image = firstQuestion.image {
                 imagesService?.showImage(questionId: firstQuestion.id, image: image)
             }
@@ -78,10 +78,6 @@ public class SwiftQuiz {
     }
     
     private func setQuestion(_ question: Question) {
-        if let markingModel = quiz?.configuration.markingOccurs,
-            case .eachQuestion = markingModel {
-            
-        }
         accessControlService?.isUnlocked(question.id) { [weak self] isUnlocked in
             guard let self = self else {
                 return
@@ -99,7 +95,7 @@ public class SwiftQuiz {
                 self.invokeCallback(with: .marking(.questionResult(markingResult)))
             }
             self.currentQuestion = question
-            self.invokeCallback(with: .question(question.question))
+            self.invokeCallback(with: .question(question))
             if let image = question.image {
                 self.imagesService?.showImage(questionId: question.id, image: image)
             }

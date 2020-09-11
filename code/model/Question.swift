@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Question: Codable {
+public enum Question: Codable {
         
     case multipleAnswer(_ multipleAnswer: MultipleAnswer)
     case multipleChoice(_ multipleChoice: MultipleChoice)
@@ -18,7 +18,7 @@ enum Question: Codable {
         case question
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let multipleAnswer = try? container.decode(MultipleAnswer.self, forKey: .question) {
             self = .multipleAnswer(multipleAnswer)
@@ -31,7 +31,7 @@ enum Question: Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .multipleAnswer(let multipleAnswer):
@@ -91,8 +91,23 @@ enum Question: Codable {
 
 extension Question: Equatable {
     
-    static func == (lhs: Question, rhs: Question) -> Bool {
+    public static func == (lhs: Question, rhs: Question) -> Bool {
         lhs.id == rhs.id
     }
 
+}
+
+extension Question: CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .shortAnswer(let shortAnswer):
+            return shortAnswer.question
+        case .multipleChoice(let multipleChoice):
+            return "\(multipleChoice.question)\n\nChoices: \n\n\(multipleChoice.choices.joined(separator: " -or- "))"
+        case .multipleAnswer(let multipleAnswer):
+            return "\(multipleAnswer.question) (Multiple answers required)"
+        }
+    }
+    
 }

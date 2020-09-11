@@ -109,6 +109,9 @@ extension MarkingSubmissionAnswer: CustomStringConvertible {
 }
 
 func emoji(score: UInt, potentialScore: UInt) -> String {
+    guard potentialScore != 0 else {
+        return ""
+    }
     if score == potentialScore {
         return "✅"
     } else if score == 0 {

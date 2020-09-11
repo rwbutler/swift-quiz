@@ -11,7 +11,7 @@ import Foundation
 public struct QuizModel: Codable {
     let flagPole: URL?
     let title: String
-    let marking: MarkingFrequency?
+    let markingOccurs: MarkingFrequency?
     let markingUrl: URL?
     let rounds: [RoundModel]
 }

@@ -11,7 +11,7 @@ import Foundation
 public enum QuizEvent: Equatable, CustomStringConvertible {
     
     case keyRequired
-    case question(_ question: String)
+    case question(_ question: Question)
     case quizComplete
     case quizReady
     case marking(_ result: MarkingResult)

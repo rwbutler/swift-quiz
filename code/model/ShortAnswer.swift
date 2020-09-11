@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ShortAnswer: Codable {
+public struct ShortAnswer: Codable {
     let id: UUID
     let answer: String
     let image: Data?
