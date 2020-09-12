@@ -1,10 +1,10 @@
-# Swift Quiz
+# SwiftQuiz
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Frwbutler%2Fswift-quiz%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/rwbutler/swift-quiz)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Frwbutler%2Fswift-quiz%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/rwbutler/swift-quiz)
 [![Twitter](https://img.shields.io/badge/twitter-@ross_w_butler-blue.svg?style=flat)](https://twitter.com/ross_w_butler)
 
-Swift Quiz is a package for making and playing quizzes using Swift. An example client is the quiz shell, [_QSH_](https://github.com/rwbutler/QSH), an interactive shell for quizzing using the [macOS Terminal](https://en.wikipedia.org/wiki/Terminal_(macOS)).
+SwiftQuiz is a package for making and playing quizzes using Swift. An example client is the quiz shell, [_QSH_](https://github.com/rwbutler/QSH), an interactive shell for quizzing using the [macOS Terminal](https://en.wikipedia.org/wiki/Terminal_(macOS)).
 
 ## ⚠️ Work In Progress
 
