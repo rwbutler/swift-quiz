@@ -44,15 +44,7 @@ extension MarkingSubmission: CustomStringConvertible {
     public var description: String {
         var result: String = "📝 Submission\n"
         submission.forEach { round in
-            result += "\(round.title)\n"
-            for (answerIndex, answer) in round.answers.enumerated() {
-                let questionNumber = answerIndex + 1
-                let scoreString = "\(answer.score)/\(answer.potentialScore) \(emoji(score: answer.score, potentialScore: answer.potentialScore))"
-                result += "\(questionNumber).) \(answer.question)\n\t➡️ Submitted answer: \(answer.answer.joined(separator: ", "))\n\(scoreString)\n"
-            }
-            if round.totalPotentialScore != 0 {
-                result += "\nRound score: \(round.totalScore)/\(round.totalPotentialScore)\n\n"
-            }
+            result += round.description
         }
         if totalPotentialScore != 0 {
             result += "\n\nTotal score: \(totalScore)/\(totalPotentialScore)\n"
@@ -79,8 +71,7 @@ public struct MarkingSubmissionRound: Codable, Equatable {
 
 extension MarkingSubmissionRound: CustomStringConvertible {
     public var description: String {
-        var result: String = "📝 Submission\n"
-        result += "\(title)\n"
+        var result = "\(title)\n"
         for (answerIndex, answer) in answers.enumerated() {
             let questionNumber = answerIndex + 1
             let scoreString = "\(answer.score)/\(answer.potentialScore) \(emoji(score: answer.score, potentialScore: answer.potentialScore))"
