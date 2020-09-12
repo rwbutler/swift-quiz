@@ -106,7 +106,7 @@ extension Question: CustomStringConvertible {
         case .multipleChoice(let multipleChoice):
             return "\(multipleChoice.question)\(String.newlines(2))Choices: \(String.newlines(2))\(multipleChoice.choices.joined(separator: " - OR - "))"
         case .multipleAnswer(let multipleAnswer):
-            return "\(multipleAnswer.question) (Multiple answers required)"
+            return "\(multipleAnswer.question) (Multiple answers required separated by commas)"
         }
     }
     

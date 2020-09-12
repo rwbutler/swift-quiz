@@ -268,7 +268,14 @@ public class SwiftQuiz {
         }
         let submittedAnswers: [String]?
         if let answer = answer {
-            submittedAnswers = [answer]
+            switch currentQuestion {
+            case .multipleAnswer:
+                submittedAnswers = answer.components(separatedBy: ",").map {
+                    $0.trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+            default:
+                submittedAnswers = [answer]
+            }
         } else {
              submittedAnswers = nil
         }

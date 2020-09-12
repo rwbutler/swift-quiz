@@ -14,7 +14,7 @@ struct DefaultMarkingService: MarkingService {
     func isCorrect(_ submittedAnswer: String, correctAnswers: [String]) -> Bool {
         let isCorrect = correctAnswers.reduce(false) { (result, correctAnswer) in
             if let searchResult = fuse.search(correctAnswer, in: submittedAnswer) {
-                return (searchResult.score <= threshold) && result
+                return (searchResult.score <= threshold) || result
             }
             return result
         }
@@ -50,7 +50,7 @@ struct DefaultMarkingService: MarkingService {
             for scoringRule in scoringRules {
                 switch scoringRule.awardedFor {
                 case .allCorrect:
-                    let allCorrect = correctAnswers.count == answers.count
+                    let allCorrect = correctAnswerCount == (scoringRule.answerCount ?? 1)
                     score += allCorrect ? scoringRule.awardsScore : 0
                     potentialScore += scoringRule.awardsScore
                 case .eachCorrect:
