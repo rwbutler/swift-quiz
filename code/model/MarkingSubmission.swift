@@ -74,7 +74,6 @@ extension MarkingSubmissionRound: CustomStringConvertible {
         var result = "\(title)\n"
         for (answerIndex, answer) in answers.enumerated() {
             let questionNumber = answerIndex + 1
-            let scoreString = "\(answer.score)/\(answer.potentialScore) \(emoji(score: answer.score, potentialScore: answer.potentialScore))"
             result += "\(questionNumber).) \(answer.description)"
         }
         if totalPotentialScore != 0 {
@@ -95,7 +94,41 @@ public struct MarkingSubmissionAnswer: Codable, Equatable {
 extension MarkingSubmissionAnswer: CustomStringConvertible {
     public var description: String {
         let scoreString = "\(score)/\(potentialScore) \(emoji(score: score, potentialScore: potentialScore))"
-        return "\(question)\n\t➡️ Submitted answer: \(answer.joined(separator: ", "))\n\t➡️ Correct answer: \(correctAnswers.joined(separator: ", "))\n\(scoreString)\n"
+        let submittedAnswerStr = submittedAnswerString()
+        let correctAnswersStr = correctAnswerString(for: correctAnswers, score: score, outOf: potentialScore)
+        return "\(question)\(submittedAnswerStr)\(correctAnswersStr)\(String.newline)\(scoreString)\(String.newline)"
+    }
+    
+    var indentedNewline: String {
+        return "\(String.newline)\(String.tab)➡️ "
+    }
+    private func correctAnswerString(for correctAnswers: [String], score: UInt, outOf potentialScore: UInt) -> String {
+        guard shouldShowCorrectAnswer(score: score, outOf: potentialScore) else {
+            return String.empty
+        }
+        var prefix: String = indentedNewline
+        switch correctAnswers.elementCount {
+        case .none:
+            return String.empty
+        case .one:
+            prefix += "Correct answer: "
+        case .many:
+            prefix += "Correct answers: "
+        }
+        return "\(prefix)\(correctAnswers.joined(separator: ", "))"
+    }
+    
+    private func shouldShowCorrectAnswer(score: UInt, outOf potentialScore: UInt) -> Bool {
+        return score != potentialScore
+    }
+    
+    private func submittedAnswerString() -> String {
+        let prefix: String = "\(indentedNewline)Submitted answer: "
+        if answer.containsAnswers() {
+            return "\(prefix)\(answer.joined(separator: ", "))"
+        } else {
+            return "\(prefix)- PASS -"
+        }
     }
 }
 

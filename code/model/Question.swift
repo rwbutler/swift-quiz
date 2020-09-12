@@ -104,7 +104,7 @@ extension Question: CustomStringConvertible {
         case .shortAnswer(let shortAnswer):
             return shortAnswer.question
         case .multipleChoice(let multipleChoice):
-            return "\(multipleChoice.question)\n\nChoices: \n\n\(multipleChoice.choices.joined(separator: " -or- "))"
+            return "\(multipleChoice.question)\(String.newlines(2))Choices: \(String.newlines(2))\(multipleChoice.choices.joined(separator: " - OR - "))"
         case .multipleAnswer(let multipleAnswer):
             return "\(multipleAnswer.question) (Multiple answers required)"
         }
