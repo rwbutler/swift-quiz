@@ -24,19 +24,21 @@ struct DefaultMarkingService: MarkingService {
     func mark(question: Question, answers: [String]) -> MarkingSubmissionAnswer {
         switch question {
         case .shortAnswer(let shortAnswer):
+            let potentialScore = UInt(shortAnswer.scoring.awardsScore)
             guard let submittedAnswer = answers.first,
                 let score = fuse.search(shortAnswer.answer, in: submittedAnswer)?.score,
                 score <= threshold else {
-                    return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], correctAnswers: question.answers, score: 0, potentialScore: 1)
+                    return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], correctAnswers: question.answers, score: 0, potentialScore: potentialScore)
             }
-            return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], correctAnswers: question.answers, score: 1, potentialScore: 1)
+            return MarkingSubmissionAnswer(question: question.question, answer: [shortAnswer.answer], correctAnswers: question.answers, score: potentialScore, potentialScore: potentialScore)
         case .multipleChoice(let multipleChoice):
+            let potentialScore = UInt(multipleChoice.scoring.awardsScore)
             guard let submittedAnswer = answers.first,
                 let score = fuse.search(multipleChoice.answer, in: submittedAnswer)?.score,
                 score <= threshold else {
-                    return MarkingSubmissionAnswer(question: question.question, answer: question.answers, correctAnswers: [multipleChoice.answer], score: 0, potentialScore: 1)
+                    return MarkingSubmissionAnswer(question: question.question, answer: question.answers, correctAnswers: [multipleChoice.answer], score: 0, potentialScore: potentialScore)
             }
-            return MarkingSubmissionAnswer(question: question.question, answer: [multipleChoice.answer], correctAnswers: question.answers, score: 1, potentialScore: 1)
+            return MarkingSubmissionAnswer(question: question.question, answer: [multipleChoice.answer], correctAnswers: question.answers, score: potentialScore, potentialScore: potentialScore)
         case .multipleAnswer(let multipleAnswer):
             let scoringRules = multipleAnswer.scoring
             let correctAnswers = multipleAnswer.answers
@@ -49,6 +51,8 @@ struct DefaultMarkingService: MarkingService {
             // Iterate scoring criteria
             for scoringRule in scoringRules {
                 switch scoringRule.awardedFor {
+                case .none:
+                    continue
                 case .allCorrect:
                     let allCorrect = correctAnswerCount == (scoringRule.answerCount ?? 1)
                     score += allCorrect ? scoringRule.awardsScore : 0

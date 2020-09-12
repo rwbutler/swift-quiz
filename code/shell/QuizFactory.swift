@@ -23,6 +23,7 @@ struct QuizFactory {
     }
     
     func manufacture() throws -> Quiz {
+        let defaultScoring = QuestionScoring(answerCount: 1, awardsScore: 1, awardedFor: .allCorrect)
         let rounds: [Round] = try model.rounds.map { roundModel in
             let questions: [Question] = try roundModel.questions.map { questionModel in
                 switch questionModel.type {
@@ -34,7 +35,8 @@ struct QuizFactory {
                         id: UUID(),
                         answer: answer,
                         image: try imageDataSync(url: questionModel.image),
-                        question: questionModel.question
+                        question: questionModel.question,
+                        scoring: questionModel.scoring?.first ?? defaultScoring
                     )
                     return .shortAnswer(shortAnswer)
                 case "multiple-choice":
@@ -47,20 +49,21 @@ struct QuizFactory {
                         answer: answer,
                         choices: choices,
                         image: try imageDataSync(url: questionModel.image),
-                        question: questionModel.question
+                        question: questionModel.question,
+                        scoring: questionModel.scoring?.first ?? defaultScoring
                     )
                     return .multipleChoice(multipleChoice)
                 case "multiple-answer":
                     guard let answers = questionModel.answers else {
                         throw PackagingError.questionMissingAnswer
                     }
-                    let scoring = questionModel.scoring ?? [QuestionScoring(answerCount: 1, awardsScore: 1, awardedFor: .allCorrect)]
+                    let answerCount = answers.count
                     let multipleAnswer = MultipleAnswer(
                         id: UUID(),
                         answers: answers,
                         image: try imageDataSync(url: questionModel.image),
                         question: questionModel.question,
-                        scoring: scoring
+                        scoring: questionModel.scoring ?? [QuestionScoring(answerCount: answerCount, awardsScore: 1, awardedFor: .allCorrect)]
                     )
                     return .multipleAnswer(multipleAnswer)
                 default:

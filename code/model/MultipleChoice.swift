@@ -14,4 +14,5 @@ public struct MultipleChoice: Codable {
     let choices: [String]
     let image: Data?
     let question: String
+    let scoring: QuestionScoring
 }

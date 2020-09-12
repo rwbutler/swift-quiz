@@ -42,12 +42,12 @@ public struct MarkingSubmission: Codable, Equatable {
 
 extension MarkingSubmission: CustomStringConvertible {
     public var description: String {
-        var result: String = "📝 Submission\n"
+        var result: String = "📝 Submission\(String.newline)"
         submission.forEach { round in
             result += round.description
         }
         if totalPotentialScore != 0 {
-            result += "\n\nTotal score: \(totalScore)/\(totalPotentialScore)\n"
+            result += "Total score: \(totalScore)/\(totalPotentialScore)\(String.newline)"
         }
         return result
     }
@@ -71,13 +71,13 @@ public struct MarkingSubmissionRound: Codable, Equatable {
 
 extension MarkingSubmissionRound: CustomStringConvertible {
     public var description: String {
-        var result = "\(title)\n"
+        var result = "\(title)\(String.newline)"
         for (answerIndex, answer) in answers.enumerated() {
             let questionNumber = answerIndex + 1
             result += "\(questionNumber).) \(answer.description)"
         }
         if totalPotentialScore != 0 {
-            result += "\nRound score: \(totalScore)/\(totalPotentialScore)\n\n"
+            result += "\(String.newline)Round score: \(totalScore)/\(totalPotentialScore)\(String.newlines(2))"
         }
         return result
     }
@@ -93,15 +93,16 @@ public struct MarkingSubmissionAnswer: Codable, Equatable {
 
 extension MarkingSubmissionAnswer: CustomStringConvertible {
     public var description: String {
-        let scoreString = "\(score)/\(potentialScore) \(emoji(score: score, potentialScore: potentialScore))"
+        let scoreString = shouldShowScore(potentialScore: potentialScore) ? "\(score)/\(potentialScore) \(emoji(score: score, potentialScore: potentialScore))\(String.newline)" : String.empty
         let submittedAnswerStr = submittedAnswerString()
         let correctAnswersStr = correctAnswerString(for: correctAnswers, score: score, outOf: potentialScore)
-        return "\(question)\(submittedAnswerStr)\(correctAnswersStr)\(String.newline)\(scoreString)\(String.newline)"
+        return "\(question)\(submittedAnswerStr)\(correctAnswersStr)\(String.newline)\(scoreString)"
     }
     
     var indentedNewline: String {
         return "\(String.newline)\(String.tab)➡️ "
     }
+    
     private func correctAnswerString(for correctAnswers: [String], score: UInt, outOf potentialScore: UInt) -> String {
         guard shouldShowCorrectAnswer(score: score, outOf: potentialScore) else {
             return String.empty
@@ -120,6 +121,10 @@ extension MarkingSubmissionAnswer: CustomStringConvertible {
     
     private func shouldShowCorrectAnswer(score: UInt, outOf potentialScore: UInt) -> Bool {
         return score != potentialScore
+    }
+    
+    private func shouldShowScore(potentialScore: UInt) -> Bool {
+        return potentialScore != 0
     }
     
     private func submittedAnswerString() -> String {

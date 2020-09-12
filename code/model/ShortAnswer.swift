@@ -13,4 +13,5 @@ public struct ShortAnswer: Codable {
     let answer: String
     let image: Data?
     let question: String
+    let scoring: QuestionScoring
 }

@@ -51,6 +51,7 @@ struct QuestionScoring: Codable {
 }
 
 enum Awarding: String, Codable {
+    case none
     case allCorrect = "all-correct"
     case eachCorrect = "each-correct"
 }
