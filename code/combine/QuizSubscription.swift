@@ -9,7 +9,7 @@
 import Foundation
 import Combine
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 class QuizSubscription<S: Subscriber>: Subscription where S.Input == QuizEvent, S.Failure == QuizError {
     private let quiz: SwiftQuiz
     private var subscriber: S?
@@ -28,7 +28,7 @@ class QuizSubscription<S: Subscriber>: Subscription where S.Input == QuizEvent, 
     func request(_: Subscribers.Demand) {}
 }
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private extension QuizSubscription {
     
     private func startQuiz(key: String?) {

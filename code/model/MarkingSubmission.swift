@@ -84,7 +84,7 @@ extension MarkingSubmissionRound: CustomStringConvertible {
         for (answerIndex, answer) in answers.enumerated() {
             let questionNumber = answerIndex + 1
             let scoreString = "\(answer.score)/\(answer.potentialScore) \(emoji(score: answer.score, potentialScore: answer.potentialScore))"
-            result += "\(questionNumber).) \(answer.question)\n\t➡️ Submitted answer: \(answer.answer.joined(separator: ", "))\n\(scoreString)\n"
+            result += "\(questionNumber).) \(answer.description)"
         }
         if totalPotentialScore != 0 {
             result += "\nRound score: \(totalScore)/\(totalPotentialScore)\n\n"
@@ -110,7 +110,7 @@ extension MarkingSubmissionAnswer: CustomStringConvertible {
 
 func emoji(score: UInt, potentialScore: UInt) -> String {
     guard potentialScore != 0 else {
-        return ""
+        return String.empty
     }
     if score == potentialScore {
         return "✅"
